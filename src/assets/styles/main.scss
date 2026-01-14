@@ -1,0 +1,26 @@
+$primary-text: #363636;
+$secondary-text: #575757;
+$highlight-color: yellow;
+$font-family: "Montserrat", sans-serif;
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: $font-family;
+  color: $primary-text;
+  -webkit-font-smoothing: antialiased;
+}
+
+mark {
+  background-color: $highlight-color;
+  color: inherit;
+  padding: 0 2px;
+}
+
+.article-card-container {
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    filter: brightness(0.95);
+  }
+}
