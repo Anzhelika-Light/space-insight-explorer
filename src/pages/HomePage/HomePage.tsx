@@ -1,32 +1,50 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Container,
   Grid,
-  TextField,
   Typography,
   Box,
-  Divider,
   CircularProgress,
 } from "@mui/material";
-
-import { useState } from "react";
-import { useArticles } from "../../hooks/useArticle";
+import SearchInput from "../../components/SearchInput/SearchInput";
 import ArticleCard from "../../components/ArticleCard/ArticleCard";
-import SearchIcon from "@mui/icons-material/Search";
+import { api } from "../../services/api";
+import { setArticles, setSearchQuery } from "../../store/articlesSlice";
+import type { RootState } from "../../store/store";
+import type { Article } from "../../types/article";
 
 const HomePage = () => {
-  const { articles, loading, error } = useArticles();
-  const [searchQuery, setSearchQuery] = useState("");
+  const dispatch = useDispatch();
 
-  if (loading)
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
-        <CircularProgress />
-      </Box>
-    );
-  if (error) return <Typography color="error">{error}</Typography>;
+  const articles = useSelector((state: RootState) => state.articles.items);
+  const searchQuery = useSelector(
+    (state: RootState) => state.articles.searchQuery
+  );
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const loadArticles = async () => {
+      if (articles.length > 0) return;
+
+      setLoading(true);
+      try {
+        const data = await api.getArticles();
+
+        dispatch(setArticles(data));
+      } catch (error) {
+        console.error("Failed to fetch articles:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadArticles();
+  }, [dispatch, articles.length]);
 
   const filteredArticles = articles
-    .filter((article) => {
+    .filter((article: Article) => {
       const query = searchQuery.toLowerCase().trim();
       if (!query) return true;
 
@@ -35,7 +53,7 @@ const HomePage = () => {
         article.summary.toLowerCase().includes(query)
       );
     })
-    .sort((a, b) => {
+    .sort((a: Article, b: Article) => {
       const query = searchQuery.toLowerCase().trim();
       if (!query) return 0;
 
@@ -43,46 +61,64 @@ const HomePage = () => {
       const bInTitle = b.title.toLowerCase().includes(query);
 
       if (aInTitle && !bInTitle) return -1;
-
       if (!aInTitle && bInTitle) return 1;
-
       return 0;
     });
 
+  const handleSearchChange = (value: string) => {
+    dispatch(setSearchQuery(value));
+  };
+
+  if (loading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
-    <Container maxWidth="lg" sx={{ py: 5 }}>
+    <Container maxWidth="lg" sx={{ py: 6 }}>
       <Box sx={{ mb: 5 }}>
-        <Typography variant="body1" sx={{ fontWeight: 600, mb: 1 }}>
+        <Typography
+          variant="body1"
+          sx={{ fontWeight: 600, mb: 1, color: "#363636" }}
+        >
           Filter by keywords
         </Typography>
-        <TextField
-          fullWidth
-          placeholder="Search articles..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <SearchIcon sx={{ mr: 1, color: "action.active" }} />
-              ),
-            },
-          }}
-          sx={{ maxWidth: 600, backgroundColor: "#fff" }}
-        />
+        <SearchInput value={searchQuery} onChange={handleSearchChange} />
       </Box>
 
-      <Typography sx={{ fontWeight: 600, mb: 1 }}>
+      <Typography
+        variant="body1"
+        sx={{
+          fontWeight: 600,
+          mb: 3,
+          borderBottom: "1px solid #eaeaea",
+          pb: 1,
+          color: "#363636",
+        }}
+      >
         Results: {filteredArticles.length}
       </Typography>
-      <Divider sx={{ mb: 4 }} />
 
-      <Grid container spacing={5} justifyContent="center">
-        {filteredArticles.map((article) => (
+      <Grid container spacing={4}>
+        {filteredArticles.map((article: Article) => (
           <Grid key={article.id} size={{ xs: 12, sm: 6, md: 4 }}>
             <ArticleCard article={article} searchQuery={searchQuery} />
           </Grid>
         ))}
       </Grid>
+
+      {filteredArticles.length === 0 && !loading && (
+        <Typography
+          variant="h6"
+          align="center"
+          sx={{ mt: 5, color: "text.secondary" }}
+        >
+          No articles found for "{searchQuery}"
+        </Typography>
+      )}
     </Container>
   );
 };
