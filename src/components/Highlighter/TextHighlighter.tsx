@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import styles from "./TextHighlighter.module.scss";
 
 interface Props {
   text: string;
@@ -25,11 +26,7 @@ const TextHighlighter = ({ text, searchQuery }: Props) => {
     <>
       {parts.map((part, index) =>
         keywords.includes(part.toLowerCase()) ? (
-          <Box
-            key={index}
-            component="span"
-            sx={{ backgroundColor: "#ffff00", color: "inherit" }}
-          >
+          <Box key={index} component="span" className={styles.highlight}>
             {part}
           </Box>
         ) : (

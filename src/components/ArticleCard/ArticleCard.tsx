@@ -4,6 +4,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { Link } from "react-router-dom";
 import type { Article } from "../../types/article";
 import TextHighlighter from "../Highlighter/TextHighlighter";
+import styles from "./ArticleCard.module.scss";
 
 interface Props {
   article: Article;
@@ -26,6 +27,7 @@ const ArticleCard = ({ article, searchQuery }: Props) => {
 
   return (
     <Card
+      className={styles.cardContainer}
       sx={{
         height: "100%",
         display: "flex",
@@ -53,9 +55,7 @@ const ArticleCard = ({ article, searchQuery }: Props) => {
           flexDirection: "column",
         }}
       >
-        <Box
-          sx={{ display: "flex", alignItems: "center", opacity: 0.6, mb: 1.5 }}
-        >
+        <Box className={styles.dateInfo} sx={{ mb: 1.5, opacity: 0.6 }}>
           <CalendarTodayIcon sx={{ fontSize: 14, mr: 1 }} />
           <Typography variant="caption" sx={{ fontSize: "12px" }}>
             {formatDate(article.published_at)}
@@ -65,9 +65,9 @@ const ArticleCard = ({ article, searchQuery }: Props) => {
         <Typography
           variant="h6"
           component="h2"
+          className={styles.title}
           sx={{
             fontSize: "18px",
-            fontWeight: 400,
             lineHeight: 1.25,
             mb: 2,
             minHeight: "2.5em",
@@ -78,7 +78,7 @@ const ArticleCard = ({ article, searchQuery }: Props) => {
 
         <Typography
           variant="body2"
-          color="text.secondary"
+          className={styles.summary}
           sx={{
             mb: 3,
             fontSize: "14px",
@@ -92,17 +92,14 @@ const ArticleCard = ({ article, searchQuery }: Props) => {
         <Box
           component={Link}
           to={`/article/${article.id}`}
+          className={styles.readMoreLink}
           sx={{
             textDecoration: "none",
-            color: "#363636",
-            fontWeight: 700,
             fontSize: "14px",
             display: "inline-flex",
             alignItems: "center",
             gap: "6px",
-            "&:hover": {
-              textDecoration: "underline",
-            },
+            mt: "auto",
           }}
         >
           Read more <ArrowForwardIcon sx={{ fontSize: 16 }} />
@@ -113,3 +110,4 @@ const ArticleCard = ({ article, searchQuery }: Props) => {
 };
 
 export default ArticleCard;
+

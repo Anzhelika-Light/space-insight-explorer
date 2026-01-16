@@ -1,5 +1,6 @@
 import { TextField, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import styles from "./SearchInput.module.scss";
 
 interface SearchInputProps {
   value: string;
@@ -13,6 +14,7 @@ const SearchInput = ({ value, onChange }: SearchInputProps) => {
       placeholder="Search..."
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      className={styles.searchInput}
       sx={{
         maxWidth: "600px",
         backgroundColor: "#fff",
@@ -31,7 +33,7 @@ const SearchInput = ({ value, onChange }: SearchInputProps) => {
         input: {
           startAdornment: (
             <InputAdornment position="start">
-              <SearchIcon sx={{ color: "#575757" }} />
+              <SearchIcon className={styles.searchIcon} />
             </InputAdornment>
           ),
         },

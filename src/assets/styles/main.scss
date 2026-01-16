@@ -1,7 +1,4 @@
-$primary-text: #363636;
-$secondary-text: #575757;
-$highlight-color: yellow;
-$font-family: "Montserrat", sans-serif;
+@import "variables";
 
 body {
   margin: 0;
@@ -23,4 +20,9 @@ mark {
   &:hover {
     filter: brightness(0.95);
   }
+}
+
+span.search-highlight {
+  background-color: $highlight-color !important;
+  color: inherit;
 }
