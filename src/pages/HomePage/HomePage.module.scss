@@ -1,0 +1,36 @@
+@import "../../assets/styles/variables";
+
+.homeContainer {
+  font-family: $font-family;
+  color: $primary-text;
+}
+
+.filterLabel {
+  font-weight: 600;
+  font-family: $font-family;
+  color: $primary-text;
+}
+
+.resultsCount {
+  font-weight: 600;
+  font-family: $font-family;
+  color: $primary-text;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.loadMoreBtn {
+  background-color: $primary-text !important;
+  color: #ffffff !important;
+  font-family: $font-family !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+  padding: 10px 30px !important;
+
+  &:hover {
+    background-color: #000000 !important;
+  }
+
+  &:disabled {
+    background-color: #cccccc !important;
+  }
+}

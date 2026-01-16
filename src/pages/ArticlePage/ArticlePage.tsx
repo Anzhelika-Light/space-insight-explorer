@@ -13,6 +13,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import type { RootState } from "../../store/store";
 import { api } from "../../services/api";
 import type { Article } from "../../types/article";
+import styles from "./ArticlePage.module.scss";
 
 const LOREM_IPSUM = `
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
@@ -22,8 +23,6 @@ const LOREM_IPSUM = `
   \n\n
   Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, 
   eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. 
-  Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores 
-  eos qui ratione voluptatem sequi nesciunt. 
 `;
 
 const ArticlePage = () => {
@@ -81,7 +80,7 @@ const ArticlePage = () => {
           component={Link}
           to="/"
           variant="contained"
-          sx={{ backgroundColor: "#363636" }}
+          className={styles.backButton}
         >
           Back to homepage
         </Button>
@@ -90,25 +89,13 @@ const ArticlePage = () => {
   }
 
   return (
-    <Box sx={{ position: "relative", minHeight: "100vh", pb: 10 }}>
+    <Box className={styles.pageWrapper}>
       <Box
-        sx={{
-          width: "100%",
-          height: "400px",
-          backgroundImage: `url(${article.image_url})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          position: "absolute",
-          top: 0,
-          left: 0,
-          zIndex: 0,
-        }}
+        className={styles.heroImage}
+        sx={{ backgroundImage: `url(${article.image_url})` }}
       />
 
-      <Container
-        maxWidth="lg"
-        sx={{ pt: "300px", position: "relative", zIndex: 1 }}
-      >
+      <Container maxWidth="lg" className={styles.contentContainer}>
         <Box
           sx={{
             position: "sticky",
@@ -121,24 +108,11 @@ const ArticlePage = () => {
           <Button
             component={Link}
             to="/"
+            className={styles.backButton}
             startIcon={
               <ArrowBackIosNewIcon sx={{ fontSize: "14px !important" }} />
             }
-            sx={{
-              backgroundColor: "#ffffff",
-              color: "#363636",
-              fontWeight: 700,
-              textTransform: "none",
-              fontFamily: "Montserrat, sans-serif",
-              fontSize: "16px",
-              padding: "10px 24px",
-              boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.05)",
-              border: "1px solid #b8b5b5",
-              "&:hover": {
-                backgroundColor: "#f9f9f9",
-                boxShadow: "0px 12px 30px rgba(0, 0, 0, 0.1)",
-              },
-            }}
+            sx={{ padding: "10px 24px" }}
           >
             Back to homepage
           </Button>
@@ -146,39 +120,20 @@ const ArticlePage = () => {
 
         <Paper
           elevation={0}
-          sx={{
-            p: { xs: 3, md: 8, lg: 10 },
-            borderRadius: "5px",
-            border: "1px solid #eaeaea",
-            backgroundColor: "#FFFFFF",
-            boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.05)",
-          }}
+          className={styles.articlePaper}
+          sx={{ p: { xs: 3, md: 8, lg: 10 } }}
         >
           <Typography
             variant="h4"
             component="h1"
             textAlign="center"
-            sx={{
-              mb: 6,
-              fontWeight: 400,
-              fontFamily: "Montserrat, sans-serif",
-              color: "#363636",
-              lineHeight: 1.2,
-            }}
+            className={styles.articleTitle}
+            sx={{ mb: 6 }}
           >
             {article.title}
           </Typography>
 
-          <Typography
-            variant="body1"
-            sx={{
-              lineHeight: 1.6,
-              fontSize: "18px",
-              color: "#000000",
-              fontFamily: "Montserrat, sans-serif",
-              whiteSpace: "pre-line",
-            }}
-          >
+          <Typography variant="body1" className={styles.articleText}>
             {article.summary}
             {"\n\n"}
             {LOREM_IPSUM}
@@ -192,3 +147,4 @@ const ArticlePage = () => {
 };
 
 export default ArticlePage;
+

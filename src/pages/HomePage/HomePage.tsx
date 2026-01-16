@@ -18,6 +18,7 @@ import {
 } from "../../store/articlesSlice";
 import type { RootState } from "../../store/store";
 import type { Article } from "../../types/article";
+import styles from "./HomePage.module.scss";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -103,9 +104,13 @@ const HomePage = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 6 }}>
+    <Container maxWidth="lg" sx={{ py: 6 }} className={styles.homeContainer}>
       <Box sx={{ mb: 5 }}>
-        <Typography variant="body1" sx={{ fontWeight: 600, mb: 1 }}>
+        <Typography
+          variant="body1"
+          className={styles.filterLabel}
+          sx={{ mb: 1 }}
+        >
           Filter by keywords
         </Typography>
         <SearchInput
@@ -116,12 +121,8 @@ const HomePage = () => {
 
       <Typography
         variant="body1"
-        sx={{
-          fontWeight: 600,
-          mb: 3,
-          borderBottom: "1px solid #eaeaea",
-          pb: 1,
-        }}
+        className={styles.resultsCount}
+        sx={{ mb: 3, pb: 1 }}
       >
         Results: {filteredArticles.length}
       </Typography>
@@ -138,15 +139,9 @@ const HomePage = () => {
         <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
           <Button
             variant="contained"
+            className={styles.loadMoreBtn}
             onClick={handleLoadMore}
             disabled={loadingMore}
-            sx={{
-              backgroundColor: "#363636",
-              color: "#fff",
-              textTransform: "none",
-              fontWeight: 700,
-              "&:hover": { backgroundColor: "#000" },
-            }}
           >
             {loadingMore ? "Loading..." : "Load more"}
           </Button>
