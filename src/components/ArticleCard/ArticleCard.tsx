@@ -70,7 +70,7 @@ const ArticleCard = ({ article, searchQuery }: Props) => {
             fontWeight: 400,
             lineHeight: 1.25,
             mb: 2,
-            minHeight: "2.5em", // Щоб картки були однакової висоти
+            minHeight: "2.5em",
           }}
         >
           <TextHighlighter text={article.title} searchQuery={searchQuery} />

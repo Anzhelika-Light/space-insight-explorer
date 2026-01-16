@@ -5,8 +5,10 @@ const instance = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-export const getArticles = async (limit: number = 50) => {
-  const response = await instance.get(`/articles/?limit=${limit}`);
+export const getArticles = async (limit: number = 12, offset: number = 0) => {
+  const response = await instance.get(
+    `/articles/?limit=${limit}&offset=${offset}`
+  );
   return response.data;
 };
 

@@ -1,20 +1,40 @@
+import { Box } from "@mui/material";
+
 interface Props {
   text: string;
   searchQuery: string;
 }
 
 const TextHighlighter = ({ text, searchQuery }: Props) => {
-  if (!searchQuery.trim()) {
-    return <>{text}</>;
-  }
+  const keywords = searchQuery
+    .toLowerCase()
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
 
-  const regex = new RegExp(`(${searchQuery})`, "gi");
+  if (keywords.length === 0) return <>{text}</>;
+
+  const escapedKeywords = keywords.map((word) =>
+    word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+  );
+  const regex = new RegExp(`(${escapedKeywords.join("|")})`, "gi");
+
   const parts = text.split(regex);
 
   return (
     <>
       {parts.map((part, index) =>
-        regex.test(part) ? <mark key={index}>{part}</mark> : part
+        keywords.includes(part.toLowerCase()) ? (
+          <Box
+            key={index}
+            component="span"
+            sx={{ backgroundColor: "#ffff00", color: "inherit" }}
+          >
+            {part}
+          </Box>
+        ) : (
+          part
+        )
       )}
     </>
   );

@@ -9,11 +9,13 @@ interface SpaceflightResponse {
 interface ArticlesState {
   items: Article[];
   searchQuery: string;
+  totalCount: number;
 }
 
 const initialState: ArticlesState = {
   items: [],
   searchQuery: "",
+  totalCount: 0,
 };
 
 const articlesSlice = createSlice({
@@ -22,7 +24,11 @@ const articlesSlice = createSlice({
   reducers: {
     setArticles: (state, action: PayloadAction<SpaceflightResponse>) => {
       state.items = action.payload.results;
-      //   state.totalCount = action.payload.count;
+      state.totalCount = action.payload.count;
+    },
+    addArticles: (state, action: PayloadAction<SpaceflightResponse>) => {
+      state.items = [...state.items, ...action.payload.results];
+      state.totalCount = action.payload.count;
     },
     setSearchQuery: (state, action: PayloadAction<string>) => {
       state.searchQuery = action.payload;
@@ -30,5 +36,6 @@ const articlesSlice = createSlice({
   },
 });
 
-export const { setArticles, setSearchQuery } = articlesSlice.actions;
+export const { setArticles, addArticles, setSearchQuery } =
+  articlesSlice.actions;
 export default articlesSlice.reducer;

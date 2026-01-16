@@ -1,38 +1,60 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
   Container,
-  Box,
   Typography,
+  Box,
   Button,
+  Paper,
   CircularProgress,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import type { Article } from "../../types/article";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import type { RootState } from "../../store/store";
 import { api } from "../../services/api";
+import type { Article } from "../../types/article";
+
+const LOREM_IPSUM = `
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  \n\n
+  Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, 
+  eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. 
+  Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores 
+  eos qui ratione voluptatem sequi nesciunt. 
+`;
 
 const ArticlePage = () => {
   const { id } = useParams<{ id: string }>();
-  const [article, setArticle] = useState<Article | null>(null);
-  const [loading, setLoading] = useState(true);
+
+  const articlesFromStore = useSelector(
+    (state: RootState) => state.articles.items
+  );
+
+  const [article, setArticle] = useState<Article | null>(
+    articlesFromStore.find((a) => a.id === Number(id)) || null
+  );
+  const [loading, setLoading] = useState<boolean>(!article);
 
   useEffect(() => {
     const fetchArticle = async () => {
-      if (!id) return;
-      try {
-        const data = await api.getArticleById(Number(id));
-        setArticle(data);
-      } catch (error) {
-        console.error("Error fetching article:", error);
-      } finally {
-        setLoading(false);
+      if (!article && id) {
+        setLoading(true);
+        try {
+          const data = await api.getArticleById(Number(id));
+          setArticle(data);
+        } catch (error) {
+          console.error("Failed to fetch article:", error);
+        } finally {
+          setLoading(false);
+        }
       }
     };
 
     fetchArticle();
-    // Прокрутка вгору при переході на сторінку
-    window.scrollTo(0, 0);
-  }, [id]);
+  }, [id, article]);
 
   if (loading) {
     return (
@@ -41,7 +63,7 @@ const ArticlePage = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "100vh",
+          minHeight: "100vh",
         }}
       >
         <CircularProgress />
@@ -51,79 +73,119 @@ const ArticlePage = () => {
 
   if (!article) {
     return (
-      <Typography variant="h5" align="center">
-        Article not found
-      </Typography>
+      <Box sx={{ textAlign: "center", mt: 10 }}>
+        <Typography variant="h5" sx={{ mb: 2 }}>
+          Article not found
+        </Typography>
+        <Button
+          component={Link}
+          to="/"
+          variant="contained"
+          sx={{ backgroundColor: "#363636" }}
+        >
+          Back to homepage
+        </Button>
+      </Box>
     );
   }
 
   return (
-    <Box>
+    <Box sx={{ position: "relative", minHeight: "100vh", pb: 10 }}>
       <Box
         sx={{
           width: "100%",
-          height: "245px",
+          height: "400px",
           backgroundImage: `url(${article.image_url})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          position: "relative",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          zIndex: 0,
         }}
       />
 
       <Container
-        maxWidth="md"
-        sx={{ position: "relative", mt: "-50px", pb: 10 }}
+        maxWidth="lg"
+        sx={{ pt: "300px", position: "relative", zIndex: 1 }}
       >
         <Box
           sx={{
-            backgroundColor: "#fff",
-            p: { xs: 3, md: 8 },
+            position: "sticky",
+            top: "24px",
+            zIndex: 1100,
+            mb: 3,
+            width: "fit-content",
+          }}
+        >
+          <Button
+            component={Link}
+            to="/"
+            startIcon={
+              <ArrowBackIosNewIcon sx={{ fontSize: "14px !important" }} />
+            }
+            sx={{
+              backgroundColor: "#ffffff",
+              color: "#363636",
+              fontWeight: 700,
+              textTransform: "none",
+              fontFamily: "Montserrat, sans-serif",
+              fontSize: "16px",
+              padding: "10px 24px",
+              boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.05)",
+              border: "1px solid #b8b5b5",
+              "&:hover": {
+                backgroundColor: "#f9f9f9",
+                boxShadow: "0px 12px 30px rgba(0, 0, 0, 0.1)",
+              },
+            }}
+          >
+            Back to homepage
+          </Button>
+        </Box>
+
+        <Paper
+          elevation={0}
+          sx={{
+            p: { xs: 3, md: 8, lg: 10 },
             borderRadius: "5px",
             border: "1px solid #eaeaea",
+            backgroundColor: "#FFFFFF",
             boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.05)",
           }}
         >
           <Typography
             variant="h4"
             component="h1"
-            align="center"
-            sx={{ mb: 5, fontWeight: 400 }}
+            textAlign="center"
+            sx={{
+              mb: 6,
+              fontWeight: 400,
+              fontFamily: "Montserrat, sans-serif",
+              color: "#363636",
+              lineHeight: 1.2,
+            }}
           >
             {article.title}
           </Typography>
 
           <Typography
             variant="body1"
-            sx={{ lineHeight: 1.8, fontSize: "18px" }}
-          >
-            {article.summary}
-
-            {" "
-              .repeat(500)
-              .split(" ")
-              .map(
-                () =>
-                  "This is a placeholder for the extended article content that would normally come from the API if it provided full text bodies. "
-              )
-              .join("")}
-          </Typography>
-        </Box>
-
-        <Box sx={{ mt: 5, ml: { md: 8 } }}>
-          <Button
-            component={Link}
-            to="/"
-            startIcon={<ArrowBackIcon />}
             sx={{
-              color: "#363636",
-              fontWeight: 700,
-              textTransform: "none",
-              fontSize: "16px",
+              lineHeight: 1.6,
+              fontSize: "18px",
+              color: "#000000",
+              fontFamily: "Montserrat, sans-serif",
+              whiteSpace: "pre-line",
             }}
           >
-            Back to homepage
-          </Button>
-        </Box>
+            {article.summary}
+            {"\n\n"}
+            {LOREM_IPSUM}
+            {"\n\n"}
+            {LOREM_IPSUM}
+          </Typography>
+        </Paper>
       </Container>
     </Box>
   );

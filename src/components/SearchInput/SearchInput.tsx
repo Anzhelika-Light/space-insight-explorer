@@ -27,12 +27,14 @@ const SearchInput = ({ value, onChange }: SearchInputProps) => {
         boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.05)",
         borderRadius: "5px",
       }}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <SearchIcon sx={{ color: "#575757" }} />
-          </InputAdornment>
-        ),
+      slotProps={{
+        input: {
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon sx={{ color: "#575757" }} />
+            </InputAdornment>
+          ),
+        },
       }}
     />
   );

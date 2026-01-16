@@ -6,68 +6,93 @@ import {
   Typography,
   Box,
   CircularProgress,
+  Button,
 } from "@mui/material";
 import SearchInput from "../../components/SearchInput/SearchInput";
 import ArticleCard from "../../components/ArticleCard/ArticleCard";
 import { api } from "../../services/api";
-import { setArticles, setSearchQuery } from "../../store/articlesSlice";
+import {
+  setArticles,
+  addArticles,
+  setSearchQuery,
+} from "../../store/articlesSlice";
 import type { RootState } from "../../store/store";
 import type { Article } from "../../types/article";
 
 const HomePage = () => {
   const dispatch = useDispatch();
-
-  const articles = useSelector((state: RootState) => state.articles.items);
-  const searchQuery = useSelector(
-    (state: RootState) => state.articles.searchQuery
-  );
+  const {
+    items: articles,
+    searchQuery,
+    totalCount,
+  } = useSelector((state: RootState) => state.articles);
 
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  const LIMIT = 12;
 
   useEffect(() => {
-    const loadArticles = async () => {
+    const loadInitial = async () => {
       if (articles.length > 0) return;
-
       setLoading(true);
       try {
-        const data = await api.getArticles();
-
+        const data = await api.getArticles(LIMIT, 0);
         dispatch(setArticles(data));
-      } catch (error) {
-        console.error("Failed to fetch articles:", error);
       } finally {
         setLoading(false);
       }
     };
-
-    loadArticles();
+    loadInitial();
   }, [dispatch, articles.length]);
+
+  const handleLoadMore = async () => {
+    setLoadingMore(true);
+    try {
+      const data = await api.getArticles(LIMIT, articles.length);
+      dispatch(addArticles(data));
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   const filteredArticles = articles
     .filter((article: Article) => {
-      const query = searchQuery.toLowerCase().trim();
-      if (!query) return true;
+      const keywords = searchQuery
+        .toLowerCase()
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
 
-      return (
-        article.title.toLowerCase().includes(query) ||
-        article.summary.toLowerCase().includes(query)
+      if (keywords.length === 0) return true;
+
+      const title = article.title.toLowerCase();
+      const summary = article.summary.toLowerCase();
+
+      return keywords.some(
+        (word) => title.includes(word) || summary.includes(word)
       );
     })
     .sort((a: Article, b: Article) => {
-      const query = searchQuery.toLowerCase().trim();
-      if (!query) return 0;
+      const keywords = searchQuery
+        .toLowerCase()
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
 
-      const aInTitle = a.title.toLowerCase().includes(query);
-      const bInTitle = b.title.toLowerCase().includes(query);
+      if (keywords.length === 0) return 0;
+
+      const aInTitle = keywords.some((word) =>
+        a.title.toLowerCase().includes(word)
+      );
+      const bInTitle = keywords.some((word) =>
+        b.title.toLowerCase().includes(word)
+      );
 
       if (aInTitle && !bInTitle) return -1;
       if (!aInTitle && bInTitle) return 1;
       return 0;
     });
-
-  const handleSearchChange = (value: string) => {
-    dispatch(setSearchQuery(value));
-  };
 
   if (loading) {
     return (
@@ -80,13 +105,13 @@ const HomePage = () => {
   return (
     <Container maxWidth="lg" sx={{ py: 6 }}>
       <Box sx={{ mb: 5 }}>
-        <Typography
-          variant="body1"
-          sx={{ fontWeight: 600, mb: 1, color: "#363636" }}
-        >
+        <Typography variant="body1" sx={{ fontWeight: 600, mb: 1 }}>
           Filter by keywords
         </Typography>
-        <SearchInput value={searchQuery} onChange={handleSearchChange} />
+        <SearchInput
+          value={searchQuery}
+          onChange={(val) => dispatch(setSearchQuery(val))}
+        />
       </Box>
 
       <Typography
@@ -96,7 +121,6 @@ const HomePage = () => {
           mb: 3,
           borderBottom: "1px solid #eaeaea",
           pb: 1,
-          color: "#363636",
         }}
       >
         Results: {filteredArticles.length}
@@ -110,14 +134,23 @@ const HomePage = () => {
         ))}
       </Grid>
 
-      {filteredArticles.length === 0 && !loading && (
-        <Typography
-          variant="h6"
-          align="center"
-          sx={{ mt: 5, color: "text.secondary" }}
-        >
-          No articles found for "{searchQuery}"
-        </Typography>
+      {articles.length < totalCount && (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+          <Button
+            variant="contained"
+            onClick={handleLoadMore}
+            disabled={loadingMore}
+            sx={{
+              backgroundColor: "#363636",
+              color: "#fff",
+              textTransform: "none",
+              fontWeight: 700,
+              "&:hover": { backgroundColor: "#000" },
+            }}
+          >
+            {loadingMore ? "Loading..." : "Load more"}
+          </Button>
+        </Box>
       )}
     </Container>
   );
