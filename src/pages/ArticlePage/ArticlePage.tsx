@@ -47,6 +47,10 @@ const ArticlePage = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
+  useEffect(() => {
     const fetchArticle = async () => {
       if (!article && id) {
         setLoading(true);
