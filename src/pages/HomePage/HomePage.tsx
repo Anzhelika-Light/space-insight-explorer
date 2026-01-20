@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Container,
-  Grid,
   Typography,
   Box,
   CircularProgress,
   Button,
+  Alert,
+  AlertTitle,
+  Grid,
 } from "@mui/material";
 import SearchInput from "../../components/SearchInput/SearchInput";
 import ArticleCard from "../../components/ArticleCard/ArticleCard";
@@ -30,28 +32,38 @@ const HomePage = () => {
 
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const LIMIT = 12;
 
-  useEffect(() => {
-    const loadInitial = async () => {
-      if (articles.length > 0) return;
-      setLoading(true);
-      try {
-        const data = await api.getArticles(LIMIT, 0);
-        dispatch(setArticles(data));
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadInitial();
+  const loadInitial = useCallback(async () => {
+    if (articles.length > 0) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await api.getArticles(LIMIT, 0);
+      dispatch(setArticles(data));
+    } catch (err) {
+      setError("Failed to load articles. Please check your connection.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }, [dispatch, articles.length]);
+
+  useEffect(() => {
+    loadInitial();
+  }, [loadInitial]);
 
   const handleLoadMore = async () => {
     setLoadingMore(true);
+    setError(null);
     try {
       const data = await api.getArticles(LIMIT, articles.length);
       dispatch(addArticles(data));
+    } catch (err) {
+      setError("Could not load more articles. Please try again.");
+      console.error(err);
     } finally {
       setLoadingMore(false);
     }
@@ -71,7 +83,7 @@ const HomePage = () => {
       const summary = article.summary.toLowerCase();
 
       return keywords.some(
-        (word) => title.includes(word) || summary.includes(word)
+        (word) => title.includes(word) || summary.includes(word),
       );
     })
     .sort((a: Article, b: Article) => {
@@ -84,10 +96,10 @@ const HomePage = () => {
       if (keywords.length === 0) return 0;
 
       const aInTitle = keywords.some((word) =>
-        a.title.toLowerCase().includes(word)
+        a.title.toLowerCase().includes(word),
       );
       const bInTitle = keywords.some((word) =>
-        b.title.toLowerCase().includes(word)
+        b.title.toLowerCase().includes(word),
       );
 
       if (aInTitle && !bInTitle) return -1;
@@ -100,6 +112,25 @@ const HomePage = () => {
       <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
         <CircularProgress />
       </Box>
+    );
+  }
+
+  if (error && articles.length === 0) {
+    return (
+      <Container maxWidth="sm" sx={{ py: 10 }}>
+        <Alert
+          severity="error"
+          variant="outlined"
+          action={
+            <Button color="inherit" size="small" onClick={loadInitial}>
+              RETRY
+            </Button>
+          }
+        >
+          <AlertTitle>Error</AlertTitle>
+          {error}
+        </Alert>
+      </Container>
     );
   }
 
@@ -135,8 +166,27 @@ const HomePage = () => {
         ))}
       </Grid>
 
-      {articles.length < totalCount && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+      <Box
+        sx={{
+          mt: 6,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 2,
+        }}
+      >
+        {error && articles.length > 0 && (
+          <Alert
+            severity="error"
+            variant="filled"
+            onClose={() => setError(null)}
+            sx={{ width: "100%", maxWidth: "500px" }}
+          >
+            {error}
+          </Alert>
+        )}
+
+        {articles.length < totalCount && (
           <Button
             variant="contained"
             className={styles.loadMoreBtn}
@@ -145,8 +195,8 @@ const HomePage = () => {
           >
             {loadingMore ? "Loading..." : "Load more"}
           </Button>
-        </Box>
-      )}
+        )}
+      </Box>
     </Container>
   );
 };
