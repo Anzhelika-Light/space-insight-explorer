@@ -1,8 +1,8 @@
-@import "../../assets/styles/variables";
+@use "../../assets/styles/variables";
 
 .highlight {
-  background-color: $highlight-color;
-  color: $primary-text;
+  background-color: variables.$highlight-color;
+  color: variables.$primary-text;
   padding: 0 2px;
   border-radius: 2px;
 }

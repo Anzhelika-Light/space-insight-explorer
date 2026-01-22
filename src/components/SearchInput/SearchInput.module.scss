@@ -1,12 +1,12 @@
-@import "../../assets/styles/variables";
+@use "../../assets/styles/variables";
 
 .searchInput {
   input {
-    font-family: $font-family !important;
-    color: $primary-text;
+    font-family: variables.$font-family !important;
+    color: variables.$primary-text;
   }
 
   .searchIcon {
-    color: $secondary-text;
+    color: variables.$secondary-text;
   }
 }

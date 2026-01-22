@@ -1,10 +1,10 @@
-@import "../../assets/styles/variables";
+@use "../../assets/styles/variables";
 
 .pageWrapper {
   position: relative;
   min-height: 100vh;
   padding-bottom: 80px;
-  font-family: $font-family;
+  font-family: variables.$font-family;
 }
 
 .heroImage {
@@ -26,8 +26,8 @@
 
 .backButton {
   background-color: #ffffff !important;
-  color: $primary-text !important;
-  font-family: $font-family !important;
+  color: variables.$primary-text !important;
+  font-family: variables.$font-family !important;
   font-weight: 700 !important;
   text-transform: none !important;
   font-size: 16px !important;
@@ -48,15 +48,15 @@
 }
 
 .articleTitle {
-  color: $primary-text;
-  font-family: $font-family;
+  color: variables.$primary-text;
+  font-family: variables.$font-family;
   font-weight: 400;
   line-height: 1.2;
 }
 
 .articleText {
   color: #000000;
-  font-family: $font-family;
+  font-family: variables.$font-family;
   line-height: 1.6;
   font-size: 18px;
   white-space: pre-line;

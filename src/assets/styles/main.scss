@@ -1,15 +1,15 @@
-@import "variables";
+@use "variables";
 
 body {
   margin: 0;
   padding: 0;
-  font-family: $font-family;
-  color: $primary-text;
+  font-family: variables.$font-family;
+  color: variables.$primary-text;
   -webkit-font-smoothing: antialiased;
 }
 
 mark {
-  background-color: $highlight-color;
+  background-color: variables.$highlight-color;
   color: inherit;
   padding: 0 2px;
 }
@@ -23,6 +23,6 @@ mark {
 }
 
 span.search-highlight {
-  background-color: $highlight-color !important;
+  background-color: variables.$highlight-color !important;
   color: inherit;
 }

@@ -1,29 +1,29 @@
-@import "../../assets/styles/variables";
+@use "../../assets/styles/variables";
 
 .cardContainer {
-  font-family: $font-family !important; 
+  font-family: variables.$font-family !important;
 
   .dateInfo {
-    color: $secondary-text;
+    color: variables.$secondary-text;
     display: flex;
     align-items: center;
-    font-family: $font-family;
+    font-family: variables.$font-family;
   }
 
   h2.title {
-    color: $primary-text;
-    font-family: $font-family;
+    color: variables.$primary-text;
+    font-family: variables.$font-family;
     font-weight: 600;
   }
 
   .summary {
-    color: $secondary-text;
-    font-family: $font-family;
+    color: variables.$secondary-text;
+    font-family: variables.$font-family;
   }
 
   .readMoreLink {
-    color: $primary-text;
-    font-family: $font-family;
+    color: variables.$primary-text;
+    font-family: variables.$font-family;
     font-weight: 700;
     transition: text-decoration 0.2s;
 
