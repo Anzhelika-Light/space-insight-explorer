@@ -1,10 +1,10 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Article } from "../types/article";
+import type { Article, ApiResponse } from "../types/article";
 
-interface SpaceflightResponse {
-  results: Article[];
-  count: number;
-}
+// interface SpaceflightResponse {
+//   results: Article[];
+//   count: number;
+// }
 
 interface ArticlesState {
   items: Article[];
@@ -22,11 +22,11 @@ const articlesSlice = createSlice({
   name: "articles",
   initialState,
   reducers: {
-    setArticles: (state, action: PayloadAction<SpaceflightResponse>) => {
+    setArticles: (state, action: PayloadAction<ApiResponse>) => {
       state.items = action.payload.results;
       state.totalCount = action.payload.count;
     },
-    addArticles: (state, action: PayloadAction<SpaceflightResponse>) => {
+    addArticles: (state, action: PayloadAction<ApiResponse>) => {
       state.items = [...state.items, ...action.payload.results];
       state.totalCount = action.payload.count;
     },
